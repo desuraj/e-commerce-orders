@@ -154,6 +154,6 @@ Full design specification for the Rush Delivery feature. Covers:
 
 ---
 
-### [`api-collection/create-order-activity-diagram.md`](api-collection/create-order-activity-diagram.md) — Activity Diagram
+### [`create-order-activity-diagram.md`](create-order-activity-diagram.md) — Activity Diagram
 
 Front-end ↔ Back-end swim-lane diagram for the Create Order API showing every request, decision, error path, and real-time WebSocket push.
