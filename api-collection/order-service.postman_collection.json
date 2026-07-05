@@ -1,0 +1,227 @@
+{
+  "info": {
+    "name": "Order Service API",
+    "_postman_id": "order-svc-collection-v1",
+    "description": "Postman collection for the E-Commerce Order Service.\nBase URL: http://localhost:8080\n\nSupports two order types:\n- STANDARD — normal delivery\n- RUSH     — 2-hour delivery (min $100, rush zone required)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Standard Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST12345\",\n  \"orderType\": \"STANDARD\",\n  \"deliveryType\": \"STANDARD\",\n  \"deliveryAddress\": {\n    \"name\": \"Suraj Deo\",\n    \"phone\": \"9876543210\",\n    \"addressLine1\": \"123 MG Road\",\n    \"addressLine2\": \"Near Metro Station\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"items\": [\n    {\n      \"productId\": \"P1001\",\n      \"quantity\": 2,\n      \"price\": 60.00\n    },\n    {\n      \"productId\": \"P2005\",\n      \"quantity\": 1,\n      \"price\": 40.00\n    }\n  ],\n  \"paymentMode\": \"ONLINE\",\n  \"couponCode\": \"SAVE100\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a STANDARD order.\n\nExpected: 201 Created\n{\n  \"id\": 1,\n  \"customerId\": \"CUST12345\",\n  \"status\": \"PENDING\",\n  \"orderType\": \"STANDARD\",\n  \"deliveryType\": \"STANDARD\",\n  \"totalAmount\": 160.00,\n  \"estimatedDelivery\": null,\n  \"createdAt\": \"...\"\n}"
+          },
+          "response": [
+            {
+              "name": "201 Created — Standard Order",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"customerId\": \"CUST12345\",\n  \"status\": \"PENDING\",\n  \"orderType\": \"STANDARD\",\n  \"deliveryType\": \"STANDARD\",\n  \"totalAmount\": 160.00,\n  \"estimatedDelivery\": null,\n  \"createdAt\": \"2025-01-01T10:00:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Rush Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST12345\",\n  \"orderType\": \"RUSH\",\n  \"deliveryType\": \"RUSH\",\n  \"deliveryAddress\": {\n    \"name\": \"Suraj Deo\",\n    \"phone\": \"9876543210\",\n    \"addressLine1\": \"123 MG Road\",\n    \"addressLine2\": \"Near Metro Station\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"items\": [\n    {\n      \"productId\": \"P1001\",\n      \"quantity\": 2,\n      \"price\": 70.00\n    },\n    {\n      \"productId\": \"P2005\",\n      \"quantity\": 1,\n      \"price\": 50.00\n    }\n  ],\n  \"paymentMode\": \"ONLINE\",\n  \"couponCode\": \"SAVE100\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a RUSH order (2-hour delivery).\nRequirements:\n- Total amount >= $100\n- Delivery pincode must be in a configured Rush Service Zone\n\nExpected: 201 Created\n{\n  \"id\": 2,\n  \"customerId\": \"CUST12345\",\n  \"status\": \"PENDING\",\n  \"orderType\": \"RUSH\",\n  \"deliveryType\": \"RUSH\",\n  \"totalAmount\": 190.00,\n  \"estimatedDelivery\": \"2:00 PM\",\n  \"createdAt\": \"...\"\n}"
+          },
+          "response": [
+            {
+              "name": "201 Created — Rush Order",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 2,\n  \"customerId\": \"CUST12345\",\n  \"status\": \"PENDING\",\n  \"orderType\": \"RUSH\",\n  \"deliveryType\": \"RUSH\",\n  \"totalAmount\": 190.00,\n  \"estimatedDelivery\": \"2:00 PM\",\n  \"createdAt\": \"2025-01-01T10:00:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Rush Order — Below Min Amount (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST12345\",\n  \"orderType\": \"RUSH\",\n  \"deliveryType\": \"RUSH\",\n  \"deliveryAddress\": {\n    \"name\": \"Suraj Deo\",\n    \"phone\": \"9876543210\",\n    \"addressLine1\": \"123 MG Road\",\n    \"addressLine2\": \"Near Metro Station\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"items\": [\n    {\n      \"productId\": \"P1001\",\n      \"quantity\": 1,\n      \"price\": 30.00\n    }\n  ],\n  \"paymentMode\": \"ONLINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Rush order with total < $100.\nExpected: 400 Bad Request\n{\n  \"error\": \"Minimum order value for Rush Delivery is $100.\"\n}"
+          },
+          "response": [
+            {
+              "name": "400 Bad Request — Min Amount Not Met",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Minimum order value for Rush Delivery is $100.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Rush Order — Zone Ineligible (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST12345\",\n  \"orderType\": \"RUSH\",\n  \"deliveryType\": \"RUSH\",\n  \"deliveryAddress\": {\n    \"name\": \"Suraj Deo\",\n    \"phone\": \"9876543210\",\n    \"addressLine1\": \"45 Hill Road\",\n    \"city\": \"Remote Town\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"999999\"\n  },\n  \"items\": [\n    {\n      \"productId\": \"P1001\",\n      \"quantity\": 3,\n      \"price\": 60.00\n    }\n  ],\n  \"paymentMode\": \"ONLINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Rush order with pincode outside Rush Service Zone.\nExpected: 400 Bad Request\n{\n  \"error\": \"Rush Delivery unavailable for this location.\"\n}"
+          },
+          "response": [
+            {
+              "name": "400 Bad Request — Zone Ineligible",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Rush Delivery unavailable for this location.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Order — Validation Error (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"\",\n  \"orderType\": \"STANDARD\",\n  \"deliveryType\": \"STANDARD\",\n  \"deliveryAddress\": {\n    \"name\": \"Suraj Deo\",\n    \"phone\": \"9876543210\",\n    \"addressLine1\": \"123 MG Road\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"items\": [],\n  \"paymentMode\": \"ONLINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Request with blank customerId and empty items list.\nExpected: 400 Bad Request (Bean Validation)\n{\n  \"errors\": {\n    \"customerId\": \"must not be blank\",\n    \"items\": \"must not be empty\"\n  }\n}"
+          },
+          "response": [
+            {
+              "name": "400 Bad Request — Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": {\n    \"customerId\": \"must not be blank\",\n    \"items\": \"must not be empty\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
